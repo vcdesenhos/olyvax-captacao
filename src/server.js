@@ -15,7 +15,12 @@ const PORT = process.env.PORT || 3000;
 
 initSchema();
 app.use(express.json());
-app.use(express.static(join(__dirname, '..', 'public')));
+// Sem cache nos estáticos: o navegador sempre revalida e pega a versão nova
+// (evita o app.js/styles.css ficarem "presos" numa versão antiga após atualizar).
+app.use(express.static(join(__dirname, '..', 'public'), {
+  etag: false,
+  setHeaders: (res) => res.setHeader('Cache-Control', 'no-store')
+}));
 
 // --- Leitura ---
 app.get('/api/stats', (_req, res) => res.json(stats()));

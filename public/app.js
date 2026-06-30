@@ -269,7 +269,9 @@ function modalAddLead(){
     closeModal();toast('Lead criado');refresh();};
 }
 const STATUS_OPTS=['Identificado','Abordado','Respondeu','Convertido','Frio'];
+let _editLeadId=null;
 async function modalEdit(id){
+  _editLeadId=id;
   const l=await api('/api/leads/'+id); if(l.erro)return toast('Lead não encontrado');
   const opts=STATUS_OPTS.map(s=>`<option value="${s}" ${s===l.status?'selected':''}>${s}</option>`).join('');
   openModal(`<h3>Editar lead</h3><p class="hint">${esc(l.nome)}</p>
@@ -288,10 +290,40 @@ async function modalEdit(id){
     <label>Descrição / notas</label><textarea id="e_desc" rows="3" placeholder="Observações sobre o lead...">${esc(l.descricao)}</textarea>
     <label class="chk"><input type="checkbox" id="e_pipe" ${l.no_pipeline?'checked':''}> No pipeline</label>
     <label class="chk"><input type="checkbox" id="e_ads" ${l.meta_ads?'checked':''}> Roda anúncios na Meta</label>
+    <div class="lead-tasks">
+      <div class="lt-head">⚲ Tarefas deste lead</div>
+      <div id="e_tasks" class="lt-list"></div>
+      <div class="lt-add">
+        <input id="e_tk_titulo" placeholder="Nova tarefa para ${esc((l.nome||'').split(' ')[0])}...">
+        <input id="e_tk_data" type="date">
+        <button class="btn line" id="e_tk_add" type="button">+ Tarefa</button>
+      </div>
+    </div>
     <div class="actions"><button class="btn" data-close>Cancelar</button><button class="btn primary" id="e_save">Salvar alterações</button></div>`);
+  renderLeadTasks(id);
+  $('#e_tk_add').onclick=async()=>{
+    const titulo=$('#e_tk_titulo').value.trim(); if(!titulo) return toast('Escreva a tarefa');
+    await api('/api/tarefas',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({titulo,lead:l.nome,lead_id:id,vence_em:$('#e_tk_data').value||null})});
+    $('#e_tk_titulo').value=''; $('#e_tk_data').value=''; toast('Tarefa criada'); renderLeadTasks(id);
+  };
   $('#e_save').onclick=async()=>{const nome=$('#e_nome').value.trim();if(!nome)return toast('O nome não pode ficar vazio');
     await api('/api/leads/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome,nicho:$('#e_nicho').value.trim()||null,status:$('#e_status').value,telefone:$('#e_tel').value.trim()||null,whatsapp:$('#e_wa').value.replace(/\D/g,'')||null,email:$('#e_email').value.trim()||null,instagram:$('#e_ig').value.trim()||null,site:$('#e_site').value.trim()||null,endereco:$('#e_end').value.trim()||null,cidade:$('#e_cidade').value.trim()||null,proxima_acao:$('#e_pa').value.trim()||null,acao_em:$('#e_ae').value||null,descricao:$('#e_desc').value.trim()||null,no_pipeline:$('#e_pipe').checked?1:0,meta_ads:$('#e_ads').checked?1:0})});
     closeModal();toast('Lead atualizado');refresh();};
+}
+
+async function renderLeadTasks(leadId){
+  const box=$('#e_tasks'); if(!box) return;
+  const todas=await api('/api/tarefas');
+  const minhas=todas.filter(t=>t.lead_id===leadId);
+  const hoje=new Date().toISOString().slice(0,10);
+  box.innerHTML = minhas.length ? minhas.map(t=>{
+    const atras=t.vence_em && !t.feito && t.vence_em<hoje;
+    return `<div class="lt-item ${t.feito?'done':''}" data-ltid="${t.id}">
+      <button class="lt-check ${t.feito?'on':''}" data-ltact="toggle">${t.feito?'✓':''}</button>
+      <span class="lt-tt">${esc(t.titulo)}${t.vence_em?` <small class="${atras?'atras':''}">${atras?'⚠ ':''}${esc(t.vence_em)}</small>`:''}</span>
+      <button class="lt-del" data-ltact="del">🗑</button></div>`;
+  }).join('') : '<div class="lt-vazio">Nenhuma tarefa ainda.</div>';
 }
 
 async function modalExcluir(id){
@@ -346,6 +378,24 @@ $('#fStatus').addEventListener('change',e=>{
 });
 $('#kpiHero').addEventListener('click',e=>{const c=e.target.closest('[data-filter]');if(c)filtrarPor(c.dataset.filter);});
 $('#kpiMini').addEventListener('click',e=>{const c=e.target.closest('[data-filter]');if(c)filtrarPor(c.dataset.filter);});
+$('#fAplicar').addEventListener('click',()=>{
+  state.nicho=$('#fNicho').value; state.cidade=$('#fCidade').value; state.status=$('#fStatus').value;
+  state.q=$('#search').value.trim(); state.offset=0;
+  if(['abordados','responderam','convertidos','frio'].includes(state.tab) && state.status){
+    state.tab='todos';
+    [...$('#tabs').children].forEach(x=>x.classList.toggle('active', x.dataset.tab==='todos'));
+  }
+  loadLeads();
+  document.querySelector('.table-wrap')?.scrollIntoView({behavior:'smooth',block:'start'});
+  toast('Filtros aplicados');
+});
+$('#fLimpar').addEventListener('click',()=>{
+  state.nicho='';state.cidade='';state.status='';state.q='';state.tab='todos';state.offset=0;
+  $('#fNicho').value='';$('#fCidade').value='';$('#fStatus').value='';$('#search').value='';
+  const g=$('#globalSearch'); if(g) g.value='';
+  [...$('#tabs').children].forEach((x,i)=>x.classList.toggle('active', i===0));
+  loadLeads();
+});
 $('#tf_lista').addEventListener('click',async e=>{
   const b=e.target.closest('[data-tfact]'); if(!b) return;
   const id=Number(b.closest('.tf-item').dataset.tid);
@@ -353,6 +403,13 @@ $('#tf_lista').addEventListener('click',async e=>{
   else if(b.dataset.tfact==='del'){ await api('/api/tarefas/'+id,{method:'DELETE'}); loadTarefas(); }
 });
 $('.tf-filtros')?.addEventListener('click',e=>{const b=e.target.closest('.tf-fil');if(!b)return;[...b.parentElement.children].forEach(x=>x.classList.remove('active'));b.classList.add('active');_tfFiltro=b.dataset.tf;loadTarefas();});
+$('#modal').addEventListener('click',async e=>{
+  const b=e.target.closest('[data-ltact]'); if(!b) return;
+  const id=Number(b.closest('.lt-item').dataset.ltid);
+  if(b.dataset.ltact==='toggle'){ const done=b.classList.contains('on'); await api('/api/tarefas/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({feito:done?0:1})}); }
+  else if(b.dataset.ltact==='del'){ await api('/api/tarefas/'+id,{method:'DELETE'}); }
+  if(_editLeadId) renderLeadTasks(_editLeadId);
+});
 $('#copilotCards').addEventListener('click',e=>{const a=e.target.closest('[data-sug]');if(!a)return;renderCopilot._acoes?.[Number(a.dataset.sug)]?.fn();});
 $('#shortcuts').addEventListener('click',e=>{const a=e.target.closest('[data-sc]');if(!a)return;renderCopilot._sc?.[Number(a.dataset.sc)]?.();});
 document.addEventListener('click',async e=>{
