@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OLYVAX · Prospecção</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- ===== Sidebar slim (expande no hover) ===== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <img src="/olyvax-logo.png" class="brand-symbol" alt="">
+      <img src="/olyvax-wordmark.png" class="brand-word" alt="OLYVAX">
+    </div>
+    <nav class="nav" id="nav">
+      <a class="nav-item active" data-view="prospeccao"><span class="ni-ic"><svg viewBox="0 0 20 20"><path d="M3 9.5 10 3l7 6.5V17a1 1 0 0 1-1 1h-4v-5H8v5H4a1 1 0 0 1-1-1z"/></svg></span><span class="ni-tx">Prospecção</span></a>
+      <a class="nav-item" data-view="leads"><span class="ni-ic"><svg viewBox="0 0 20 20"><circle cx="7.5" cy="7" r="3"/><path d="M2 17c0-3 2.5-4.6 5.5-4.6S13 14 13 17"/><path d="M14 4.4a3 3 0 0 1 0 5.6M15 12.4c2.2.4 3.5 1.9 3.5 4.6"/></svg></span><span class="ni-tx">Leads</span></a>
+      <a class="nav-item" data-view="tarefas"><span class="ni-ic"><svg viewBox="0 0 20 20"><rect x="3.5" y="3.5" width="13" height="13" rx="3.5"/><path d="M7 10.2l2.2 2.2L14 7.5"/></svg></span><span class="ni-tx">Tarefas</span></a>
+      <a class="nav-item" data-jump="abordados"><span class="ni-ic"><svg viewBox="0 0 20 20"><path d="M4 7h9M11 4.5 13.5 7 11 9.5M16 13H7M9 10.5 6.5 13 9 15.5"/></svg></span><span class="ni-tx">Pipeline</span></a>
+      <a class="nav-item" data-jump="follow_up"><span class="ni-ic"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/><path d="M10 6v4.3L13 12"/></svg></span><span class="ni-tx">Follow-up</span></a>
+      <a class="nav-item" data-view="campanhas"><span class="ni-ic"><svg viewBox="0 0 20 20"><path d="M4 8h3l9-3.5v11L7 12H4z"/><path d="M7 12v3.5h2.2L8 12"/></svg></span><span class="ni-tx">Campanhas</span></a>
+      <a class="nav-item" data-view="relatorios"><span class="ni-ic"><svg viewBox="0 0 20 20"><path d="M3 16.5h14"/><path d="M5 16V9M10 16V4M15 16v-5"/></svg></span><span class="ni-tx">Relatórios</span></a>
+      <a class="nav-item" data-enrich-nav><span class="ni-ic"><svg viewBox="0 0 20 20"><path d="M11 2 4 11h5l-1 7 7-9h-5z"/></svg></span><span class="ni-tx">Turbinar</span></a>
+      <a class="nav-item" data-view="integracoes"><span class="ni-ic"><svg viewBox="0 0 20 20"><rect x="3.5" y="3.5" width="5.6" height="5.6" rx="1.6"/><rect x="10.9" y="3.5" width="5.6" height="5.6" rx="1.6"/><rect x="3.5" y="10.9" width="5.6" height="5.6" rx="1.6"/><rect x="10.9" y="10.9" width="5.6" height="5.6" rx="1.6"/></svg></span><span class="ni-tx">Integrações</span></a>
+      <a class="nav-item" data-view="config"><span class="ni-ic"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="2.6"/><path d="M10 2.6v2.2M10 15.2v2.2M2.6 10h2.2M15.2 10h2.2M4.7 4.7l1.5 1.5M13.8 13.8l1.5 1.5M15.3 4.7l-1.5 1.5M6.2 13.8l-1.5 1.5"/></svg></span><span class="ni-tx">Configurações</span></a>
+    </nav>
+    <div class="sidebar-foot"></div>
+  </aside>
+
+  <!-- ===== Main ===== -->
+  <main class="main">
+    <header class="topbar">
+      <div class="search-mini"><span>⌕</span><input id="globalSearch" placeholder="Buscar nichos, contatos, empresas..."></div>
+      <div class="topbar-actions">
+        <button class="btn brandbtn" data-add-lead>+ Lead</button>
+        <button class="btn ghost" data-add-task>+ Tarefa</button>
+        <div class="avatar" title="Victor">V</div>
+      </div>
+    </header>
+
+    <div id="viewProspeccao">
+    <div class="greeting">
+      <h1>Olá, Victor! <span class="wave">👋</span></h1>
+      <p>Aqui está o panorama geral da sua prospecção.</p>
+    </div>
+
+    <div class="wow" id="wow"></div>
+
+    <section class="kpi-hero" id="kpiHero"></section>
+    <section class="kpi-mini" id="kpiMini"></section>
+
+    <div class="toolbar">
+      <div class="search-main"><span>⌕</span><input id="search" placeholder="Buscar nome, nicho, telefone, e-mail..."></div>
+      <select id="fNicho" class="select"><option value="">Todos os nichos</option></select>
+      <select id="fCidade" class="select"><option value="">Todas as cidades</option></select>
+      <select id="fStatus" class="select">
+        <option value="">Todos os status</option>
+        <option value="Identificado">Identificado</option>
+        <option value="Abordado">Abordado</option>
+        <option value="Respondeu">Respondeu</option>
+        <option value="Convertido">Convertido</option>
+        <option value="Frio">Frio</option>
+      </select>
+      <div class="tool-buttons">
+        <button class="btn line" data-import>↑ Importar CSV</button>
+        <button class="btn line" data-export>↓ Exportar</button>
+        <button class="btn line accent-amber" data-scrape>⚡ Busca</button>
+        <button class="btn line accent-purple" data-enrich>✦ Turbinar</button>
+        <button class="btn line accent-green" id="waInfo">✆ WhatsApp</button>
+        <button class="btn icon" data-refresh title="Atualizar">↻</button>
+      </div>
+    </div>
+
+    <nav class="tabs" id="tabs">
+      <button data-tab="todos" class="active">Todos</button>
+      <button data-tab="sem_site">Sem Site</button>
+      <button data-tab="com_site">Com Site</button>
+      <button data-tab="abordados">Abordados</button>
+      <button data-tab="responderam">Responderam</button>
+      <button data-tab="convertidos">Convertidos</button>
+      <button data-tab="follow_up" class="t-amber">Follow-up</button>
+      <button data-tab="frio" class="t-blue">Frio</button>
+      <button data-tab="com_ig" class="t-pink">Com IG</button>
+      <button data-tab="sem_ig">Sem IG</button>
+      <button data-tab="ads" class="t-red">Ads</button>
+      <button data-tab="sem_ads">Sem Ads</button>
+    </nav>
+
+    <div class="table-wrap">
+      <table id="leadsTable">
+        <thead><tr>
+          <th>Score</th><th>Nome / Nicho</th><th>Contato</th><th>Avaliação</th><th>Site</th>
+          <th>Digital</th><th>Status</th><th>Próxima Ação</th><th>Ações</th>
+        </tr></thead>
+        <tbody id="leadsBody"></tbody>
+      </table>
+      <div id="tableFooter" class="table-footer"></div>
+    </div>
+    </div><!-- /viewProspeccao -->
+
+    <!-- ===== Configurações ===== -->
+    <section id="viewSettings" class="view-settings" hidden>
+      <div class="settings-head">
+        <h1>Configurações</h1>
+        <p>Ajustes da plataforma. Tudo que está aqui deixa de ficar fixo no código.</p>
+      </div>
+
+      <div class="set-card">
+        <h3>Perfil</h3>
+        <div class="set-grid">
+          <label>Seu nome<input id="set_nome" placeholder="Victor"></label>
+          <label>Empresa<input id="set_empresa" placeholder="OLYVAX"></label>
+        </div>
+      </div>
+
+      <div class="set-card">
+        <h3>Padrões da Busca</h3>
+        <p class="set-hint">Usados como valores iniciais quando você abre a Busca.</p>
+        <div class="set-grid">
+          <label>Nicho padrão<input id="set_nicho" placeholder="clinica dentaria"></label>
+          <label>Cidade padrão<input id="set_cidade" placeholder="Porto, Portugal"></label>
+          <label>País — código DDI<input id="set_ddi" placeholder="351"></label>
+        </div>
+      </div>
+
+      <div class="set-card">
+        <h3>Negócio</h3>
+        <div class="set-grid">
+          <label>Ticket médio (€) <span class="set-aux">usado na estimativa de receita potencial</span>
+            <input id="set_ticket" type="number" placeholder="350"></label>
+        </div>
+      </div>
+
+      <div class="set-card">
+        <h3>Mensagem padrão de WhatsApp</h3>
+        <p class="set-hint">Modelo usado nas campanhas. Use <code>{nome}</code> para inserir o nome do lead.</p>
+        <textarea id="set_wamsg" rows="4" placeholder="Olá {nome}, tudo bem? Vi que..."></textarea>
+      </div>
+
+      <div class="set-card">
+        <h3>Manutenção</h3>
+        <p class="set-hint">Reprocessa os leads que têm site para corrigir Instagram e e-mail com a busca nova (roda em segundo plano).</p>
+        <button class="btn line accent-purple" id="set_reproc">↻ Reprocessar Instagram / e-mail</button>
+      </div>
+
+      <div class="set-actions">
+        <button class="btn primary" id="set_save">Salvar configurações</button>
+      </div>
+    </section>
+
+    <!-- ===== Campanhas de WhatsApp ===== -->
+    <section id="viewCampanhas" class="view-campaign" hidden>
+      <div class="settings-head">
+        <h1>Campanha de WhatsApp</h1>
+        <p>Monta a fila de leads com WhatsApp e você dispara um a um, com a mensagem já personalizada. Cada envio marca o lead como Abordado.</p>
+      </div>
+
+      <div class="set-card">
+        <h3>1. Público</h3>
+        <div class="set-grid">
+          <label>Segmento
+            <select id="cp_seg">
+              <option value="todos">Todos</option>
+              <option value="sem_site" selected>Sem site</option>
+              <option value="com_ig">Com Instagram</option>
+              <option value="ads">Rodam Meta Ads</option>
+              <option value="responderam">Responderam</option>
+              <option value="follow_up">Follow-up</option>
+            </select></label>
+          <label>Nicho (opcional)<select id="cp_nicho"><option value="">Todos os nichos</option></select></label>
+          <label>Cidade (opcional)<select id="cp_cidade"><option value="">Todas as cidades</option></select></label>
+        </div>
+        <label class="chk2"><input type="checkbox" id="cp_novos" checked> Apenas leads ainda não abordados</label>
+      </div>
+
+      <div class="set-card">
+        <h3>2. Mensagem</h3>
+        <p class="set-hint">Use <code>{nome}</code>, <code>{nicho}</code> e <code>{cidade}</code> — são trocados pelos dados de cada lead.</p>
+        <textarea id="cp_msg" rows="4" placeholder="Olá {nome}, tudo bem?"></textarea>
+        <div class="set-actions" style="margin-top:14px">
+          <button class="btn primary" id="cp_montar">Montar campanha →</button>
+        </div>
+      </div>
+
+      <div class="set-card" id="cp_resultado" hidden>
+        <div class="cp-bar-head">
+          <h3 style="margin:0">3. Disparo <span id="cp_count" class="set-aux"></span></h3>
+          <div class="cp-progress"><div class="cp-progress-fill" id="cp_fill"></div></div>
+        </div>
+        <div class="cp-aviso">⚠️ Envie com moderação e só pra quem faz sentido — disparos em massa pra desconhecidos violam as regras do WhatsApp e podem derrubar seu número.</div>
+        <div id="cp_lista" class="cp-lista"></div>
+      </div>
+    </section>
+
+    <!-- ===== Tarefas ===== -->
+    <section id="viewTarefas" class="view-tarefas" hidden>
+      <div class="settings-head">
+        <h1>Tarefas</h1>
+        <p>Seus afazeres de prospecção num só lugar. O que está atrasado aparece em vermelho.</p>
+      </div>
+      <div class="set-card">
+        <div class="tf-add">
+          <input id="tf_titulo" placeholder="Nova tarefa... (ex: Ligar para a Clínica X)">
+          <input id="tf_lead" placeholder="Lead (opcional)">
+          <input id="tf_data" type="date">
+          <button class="btn primary" id="tf_add">Adicionar</button>
+        </div>
+      </div>
+      <div class="tf-filtros">
+        <button class="tf-fil active" data-tf="0">Pendentes</button>
+        <button class="tf-fil" data-tf="1">Concluídas</button>
+        <button class="tf-fil" data-tf="">Todas</button>
+      </div>
+      <div id="tf_lista" class="tf-lista"></div>
+    </section>
+  </main>
+
+  <!-- ===== Owlix · Centro de Inteligência ===== -->
+  <aside class="copilot" id="copilot">
+    <div class="copilot-head">
+      <div class="mascot"><video src="/owlix.mp4" autoplay loop muted playsinline></video></div>
+      <div>
+        <div class="copilot-name">Owlix <span class="online"><span class="dot"></span>Online</span></div>
+        <div class="copilot-role">Centro de Inteligência</div>
+      </div>
+    </div>
+    <div class="copilot-msg" id="copilotMsg"></div>
+    <div id="nba"></div>
+    <div class="sec-title">Oportunidades &amp; alertas</div>
+    <div class="copilot-cards" id="copilotCards"></div>
+    <div class="sec-title">Atalhos inteligentes</div>
+    <div class="shortcuts" id="shortcuts"></div>
+    <div class="copilot-foot"><img src="/olyvax-logo.png" class="copilot-mark" alt="OLYVAX"></div>
+  </aside>
+
+</div>
+
+<div class="modal-backdrop" id="modalBackdrop" hidden><div class="modal" id="modal"></div></div>
+<div id="toast" class="toast" hidden></div>
+<script src="/app.js"></script>
+</body>
+</html>
